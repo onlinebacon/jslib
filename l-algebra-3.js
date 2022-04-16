@@ -97,11 +97,11 @@ class Matrix3 extends Array {
 }
 
 class Vector3 extends Array {
-	constructor() {
+	constructor(x = 0, y = 0, z = 0) {
 		super(3);
-		this[0] = 0;
-		this[1] = 0;
-		this[2] = 0;
+		this[0] = x;
+		this[1] = y;
+		this[2] = z;
 	}
 	apply(mat, r = this) {
 		mulVecMat(this, mat, r);
@@ -149,4 +149,4 @@ const auxMat = new Matrix3();
 const auxVec = new Vector3();
 
 export const Mat3 = () => new Matrix3();
-export const Vec3 = () => new Vector3();
+export const Vec3 = (...args) => new Vector3(...args);
