@@ -65,6 +65,9 @@ const mulVecMat = (v, m, r) => {
 class Matrix3 extends Array {
 	constructor() {
 		super(9);
+		this.clear();
+	}
+	clear() {
 		this[0] = 1;
 		this[1] = 0;
 		this[2] = 0;
@@ -74,10 +77,23 @@ class Matrix3 extends Array {
 		this[6] = 0;
 		this[7] = 0;
 		this[8] = 1;
+		return this;
 	}
 	apply(mat, r = this) {
 		mulMatMat(this, mat, r);
 		return r;
+	}
+	rotationX(angle) {
+		xRotationMat(angle, this);
+		return this;
+	}
+	rotationY(angle) {
+		yRotationMat(angle, this);
+		return this;
+	}
+	rotationZ(angle) {
+		zRotationMat(angle, this);
+		return this;
 	}
 	rotateX(angle, r = this) {
 		xRotationMat(angle, auxMat);
@@ -102,6 +118,12 @@ class Vector3 extends Array {
 		this[0] = x;
 		this[1] = y;
 		this[2] = z;
+	}
+	set(x, y, z) {
+		this[0] = x;
+		this[1] = y;
+		this[2] = z;
+		return this;
 	}
 	apply(mat, r = this) {
 		mulVecMat(this, mat, r);
@@ -142,6 +164,10 @@ class Vector3 extends Array {
 	len() {
 		const [ x, y, z ] = this;
 		return Math.sqrt(x*x + y*y + z*z);
+	}
+	clone() {
+		const [ x, y, z ] = this;
+		return new Vector3(x, y, z);
 	}
 }
 
