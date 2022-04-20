@@ -147,6 +147,15 @@ class Vector3 extends Array {
 		this.apply(auxMat, dst);
 		return dst;
 	}
+	rotateXY(xAngle, yAngle, dst = this) {
+		return this.rotateX(xAngle, dst).rotateY(yAngle);
+	}
+	rotateXZ(xAngle, zAngle, dst = this) {
+		return this.rotateX(xAngle, dst).rotateZ(zAngle);
+	}
+	rotateYX(yAngle, xAngle, dst = this) {
+		return this.rotateY(yAngle, dst).rotateX(xAngle);
+	}
 	sub(vec, dst = this) {
 		dst[0] = this[0] - vec[0];
 		dst[1] = this[1] - vec[1];
