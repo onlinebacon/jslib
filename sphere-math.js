@@ -50,3 +50,6 @@ export const coordAzDistToPoint = (coord, azimuth, distance) => {
 	coordAzDistToVec3(coord, azimuth, distance, auxVec);
 	return normalVec3ToCoord(auxVec);
 };
+
+export const coordAzimuthToVec3 = ([ lat, lon ], vec) => {
+};
