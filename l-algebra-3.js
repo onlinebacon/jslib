@@ -120,6 +120,9 @@ class Vector3 extends Array {
 		this[2] = z;
 	}
 	set(x, y, z) {
+		if (x instanceof Vector3) {
+			[ x, y, z ] = x;
+		}
 		this[0] = x;
 		this[1] = y;
 		this[2] = z;
