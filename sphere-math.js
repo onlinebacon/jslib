@@ -17,8 +17,8 @@ export const chordToArclen = (chord) => {
 	return asin(chord*0.5)*2;
 };
 
-export const coordToNormalVec3 = ([ lat, lon ], r = Vec3()) => {
-	return r.set(0, 0, 1)
+export const coordToNormalVec3 = ([ lat, lon ], dst = Vec3()) => {
+	return dst.set(0, 0, 1)
 		.rotateX(-lat)
 		.rotateY(lon);
 };
