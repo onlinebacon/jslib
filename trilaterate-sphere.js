@@ -1,7 +1,7 @@
 import { Vec3 } from './l-algebra-3.js';
 import { coordToNormalVec3, normalVec3ToCoord } from './sphere-math.js';
 
-const trilaterate = ({ points, nIterations = 50 }) => {
+const trilaterate = ({ points, nIterations = 100 }) => {
 	const refs = points.map(point => {
 		const [ lat, lon, distance ] = point;
 		const vec = coordToNormalVec3([ lat, lon ]);
@@ -16,7 +16,7 @@ const trilaterate = ({ points, nIterations = 50 }) => {
 		}
 		return sum;
 	};
-	const clusters = new Array(8);
+	let clusters = new Array(8);
 	for (let i=0; i<8; ++i) {
 		const x = 1 - ((i >> 0)&1)*2;
 		const y = 1 - ((i >> 1)&1)*2;
@@ -39,14 +39,16 @@ const trilaterate = ({ points, nIterations = 50 }) => {
 		}
 		return index;
 	};
-	const testNewPoint = (vec) => {
+	const testNewPoint = (vec, repeatable = false) => {
 		const index = indexOfClosestCluster(vec);
 		const cluster = clusters[index];
 		const error = calcError(vec);
-		if (error < cluster.error) {
-			cluster.error = error;
-			cluster.vec = vec;
-		}
+		if (error >= cluster.error) return;
+		cluster.error = error;
+		cluster.vec = vec;
+		if (!repeatable) return;
+		const second = vec.sub(cluster.vec, Vec3()).scale(0.1).add(vec);
+		testNewPoint(second);
 	};
 	const visit = ([ x, y, z ]) => {
 		for (let i=0; i<8; ++i) {
@@ -56,14 +58,14 @@ const trilaterate = ({ points, nIterations = 50 }) => {
 				z + (1 - ((i >> 2)&1)*2)*range,
 			);
 			vec.normal();
-			testNewPoint(vec);
+			testNewPoint(vec, true);
 		}
 	};
 	const iterate = () => {
 		for (const cluster of clusters) {
 			visit(cluster.vec);
 		}
-		range *= 0.7;
+		range *= 0.75;
 	};
 	const collapseClosest = () => {
 		let minDist = Infinity;
@@ -86,16 +88,17 @@ const trilaterate = ({ points, nIterations = 50 }) => {
 		clusters.splice(index, 1);
 	};
 	for (let i=0; i<nIterations; ++i) {
+		clusters.sort((a, b) => b.error - a.error);
 		iterate();
 	}
 	clusters.sort((a, b) => a.error - b.error);
-	if (refs.length === 2) {
-		while (clusters.length !== 2) {
-			collapseClosest();
-		}
-	} else {
-		clusters.splice(1, clusters.length - 1);
-	}
+	// if (refs.length === 2) {
+	// 	while (clusters.length > 2) {
+	// 		collapseClosest();
+	// 	}
+	// } else {
+	// 	clusters = clusters.slice(0, 1);
+	// }
 	return clusters.map(cluster => normalVec3ToCoord(cluster.vec));
 };
 
