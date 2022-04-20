@@ -36,3 +36,12 @@ export const calcDist = (a, b) => {
 	const chord = auxVecA.sub(auxVecB).len();
 	return chordToArclen(chord);
 };
+
+export const coordAzDistToPoint = ([ lat, lon ], azimuth, distance) => {
+	auxVec.set(0, 0, 1);
+	auxVec.rotateX(-distance);
+	auxVec.rotateZ(-azimuth);
+	auxVec.rotateX(-lat);
+	auxVec.rotateY(lon);
+	return normalVec3ToCoord(auxVec);
+};

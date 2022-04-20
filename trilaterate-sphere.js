@@ -3,7 +3,7 @@ import { coordToNormalVec3, normalVec3ToCoord } from './sphere-math.js';
 
 const trilaterate = ({ points, nIterations = 50 }) => {
 	const refs = points.map(point => {
-		const { lat, lon, distance } = point;
+		const [ lat, lon, distance ] = point;
 		const vec = coordToNormalVec3([ lat, lon ]);
 		const chord = Math.sin(distance/2)*2;
 		return { vec, distance: chord };

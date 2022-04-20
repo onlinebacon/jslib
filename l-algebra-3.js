@@ -150,6 +150,18 @@ class Vector3 extends Array {
 		r[2] = this[2] - vec[2];
 		return r;
 	}
+	add(vec, r = this) {
+		r[0] = this[0] + vec[0];
+		r[1] = this[1] + vec[1];
+		r[2] = this[2] + vec[2];
+		return r;
+	}
+	scale(scalar, r = this) {
+		r[0] = this[0]*scalar;
+		r[1] = this[1]*scalar;
+		r[2] = this[2]*scalar;
+		return r;
+	}
 	normal(r = this) {
 		const scale = 1/this.len();
 		r[0] = this[0]*scale;
