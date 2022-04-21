@@ -17,10 +17,12 @@ export const chordToArclen = (chord) => {
 	return asin(chord*0.5)*2;
 };
 
+export const arclenToChord = (arclen) => {
+	return sin(arclen*0.5)*2;
+};
+
 export const coordToNormalVec3 = ([ lat, lon ], dst = Vec3()) => {
-	return dst.set(0, 0, 1)
-		.rotateX(-lat)
-		.rotateY(lon);
+	return dst.set(0, 0, 1).rotateXY(-lat, lon);
 };
 
 export const normalVec3ToCoord = ([ x, y, z ]) => {
@@ -31,18 +33,16 @@ export const normalVec3ToCoord = ([ x, y, z ]) => {
 };
 
 export const calcDist = (a, b) => {
-	latLonToNormal(a, auxVecA);
-	latLonToNormal(b, auxVecB);
+	coordToNormalVec3(a, auxVecA);
+	coordToNormalVec3(b, auxVecB);
 	const chord = auxVecA.sub(auxVecB).len();
 	return chordToArclen(chord);
 };
 
 export const coordAzDistToVec3 = ([ lat, lon ], azimuth, distance, dst = Vec3()) => {
 	dst.set(0, 0, 1);
-	dst.rotateX(-distance);
-	dst.rotateZ(-azimuth);
-	dst.rotateX(-lat);
-	dst.rotateY(lon);
+	dst.rotateXZ(-distance, -azimuth);
+	dst.rotateXY(-lat, lon);
 	return dst;
 };
 
@@ -51,5 +51,12 @@ export const coordAzDistToPoint = (coord, azimuth, distance) => {
 	return normalVec3ToCoord(auxVec);
 };
 
-export const coordAzimuthToVec3 = ([ lat, lon ], vec) => {
+export const azFromCoordToVec3 = ([ lat, lon ], vec) => {
+	const [ x, y, z ] = auxVec.set(vec).rotateYX(-lon, lat);
+	const len = sqrt(x*x + y*y);
+	return x >= 0 ? acos(y/len) : d360 - acos(y/len);
+};
+
+export const calcAzimuth = (a, b) => {
+	return azFromCoordToVec3(a, coordToNormalVec3(b, auxVec));
 };
