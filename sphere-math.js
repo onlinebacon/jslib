@@ -31,8 +31,8 @@ export const normalVec3ToCoord = ([ x, y, z ]) => {
 };
 
 export const calcDist = (a, b) => {
-	latLonToNormal(a, auxVecA);
-	latLonToNormal(b, auxVecB);
+	coordToNormalVec3(a, auxVecA);
+	coordToNormalVec3(b, auxVecB);
 	const chord = auxVecA.sub(auxVecB).len();
 	return chordToArclen(chord);
 };
