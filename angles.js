@@ -10,7 +10,7 @@ const parseAngle = (str) => {
 	return str.trim()
 		.split(/\s+/)
 		.map((val, i) => val*Math.pow(60, -i))
-		.reduce((a, b) => a + b, 0);
+		.reduce((a, b) => a + b, 0)*sign;
 };
 
 const degreesRegex = /^(([+\-]\s*)?\d+((\s*°\s*|\s+)\d+(\.\d+)?(\s*'$)?((\s*'\s*|\s+)\d+(\.\d+)?(\s*")?)?)?)$/;
