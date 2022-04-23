@@ -15,14 +15,16 @@ const parseAngle = (str) => {
 
 const degreesRegex = /^(([+\-]\s*)?\d+((\s*°\s*|\s+)\d+(\.\d+)?(\s*'$)?((\s*'\s*|\s+)\d+(\.\d+)?(\s*")?)?)?)$/;
 const arcMinRegex = /^(([+\-]\s*)?\d+(\.\d+)?(\s*')?)$/;
+const timeRegex = /^\d+((\s*h\s*|\s+)\d+((\s*m\s*|\s+)\d+(\.\d+)?(\s*s)?)?)?$/i;
 
 export const parse = (str) => {
 	if (degreesRegex.test(str)) return parseAngle(str);
 	if (arcMinRegex.test(str)) return parseAngle(str)/60;
+	if (timeRegex.test(str)) return parseAngle(str)*(360/24);
 	return null;
 };
 
-export const stringify = (angle, precision) => {
+export const stringify = (angle) => {
 	let res = angle < 0 ? '-' : '';
 	let t = Math.round(Math.abs(angle)*60*10);
 	let mins = (t%(60*10))/10;
