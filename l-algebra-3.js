@@ -95,6 +95,9 @@ class Matrix3 extends Array {
 		zRotationMat(angle, this);
 		return this;
 	}
+	rotationZXY(zAngle, xAngle, yAngle, dst = this) {
+		return this.rotationZ(zAngle, dst).rotateX(xAngle).rotateY(yAngle);
+	}
 	rotateX(angle, dst = this) {
 		xRotationMat(angle, auxMat);
 		this.apply(auxMat, dst);
@@ -110,6 +113,9 @@ class Matrix3 extends Array {
 		this.apply(auxMat, dst);
 		return dst;
 	}
+	rotateZXY(zAngle, xAngle, yAngle, dst = this) {
+		return this.rotateZ(zAngle, dst).rotateX(xAngle).rotateY(yAngle);
+	}
 }
 
 class Vector3 extends Array {
@@ -119,6 +125,9 @@ class Vector3 extends Array {
 		this[1] = y;
 		this[2] = z;
 	}
+	get x() { return this[0]; }
+	get y() { return this[1]; }
+	get z() { return this[2]; }
 	set(x, y, z) {
 		if (x instanceof Vector3) {
 			[ x, y, z ] = x;
@@ -155,6 +164,9 @@ class Vector3 extends Array {
 	}
 	rotateYX(yAngle, xAngle, dst = this) {
 		return this.rotateY(yAngle, dst).rotateX(xAngle);
+	}
+	rotateZXY(zAngle, xAngle, yAngle, dst = this) {
+		return this.rotateZ(zAngle, dst).rotateX(xAngle).rotateY(yAngle);
 	}
 	sub(vec, dst = this) {
 		dst[0] = this[0] - vec[0];
