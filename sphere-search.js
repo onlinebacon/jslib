@@ -13,8 +13,8 @@ export class SphereSearcher {
 		this.calcError = calcError;
 	}
 	iterate() {
-		const { calcError } = this;
-		let { coord, error, distance } = this;
+		const { calcError, distance } = this;
+		let { coord, error } = this;
 		let changed = false;
 		const [ lat, lon ] = coord;
 		for (let i=0; i<N_NEIGHBORS; ++i) {
@@ -30,10 +30,9 @@ export class SphereSearcher {
 		if (changed) {
 			this.coord = coord;
 			this.error = error;
-			return false;
+		} else {
+			this.distance = distance*0.5;
 		}
-		distance *= 0.5;
-		this.distance = distance;
 		return this;
 	}
 }
