@@ -4,8 +4,13 @@ import {
 	normalVec3ToCoord,
 	coordToNormalVec3,
 	calcDist,
+	calcAzimuth,
+	coordAzDistToPoint,
 } from './sphere-math.js';
-import { sphereSearch } from './sphere-search.js';
+import {
+	sphereSearch,
+	SphereSearcher,
+} from './sphere-search.js';
 
 const { cos, sin, PI, acos, sqrt } = Math;
 const TAU = PI*2;
@@ -69,15 +74,58 @@ const calcErrorFunction = (points) => (coord) => {
 	return sum;
 };
 
+const getFocusPoints = (a, b) => {
+	if (a[2] < b[2]) [ a, b ] = [ b, a ];
+	const [ aLat, aLon, aRadius ] = a;
+	const [ bLat, bLon, bRadius ] = b;
+	const aCenter = [ aLat, aLon ];
+	const bCenter = [ bLat, bLon ];
+	const d = calcDist(aCenter, bCenter);
+	if (aRadius + bRadius <= d) {
+		const dist = aRadius + (d - aRadius - bRadius)*0.5;
+		const azimuth = calcAzimuth(aCenter, bCenter);
+		const coord = coordAzDistToPoint(aCenter, azimuth, dist);
+		return [ coord ];
+	}
+	if (d + bRadius <= aRadius) {
+		const dist = d + bRadius + (aRadius - bRadius - d)*0.5;
+		const azimuth = calcAzimuth(aCenter, bCenter);
+		const coord = coordAzDistToPoint(aCenter, azimuth, dist);
+		return [ coord ];
+	}
+	return get2CirclesIntersections(aCenter, aRadius, bCenter, bRadius);
+};
+
 export const trilaterate = (points) => {
 	if (points.length === 2) {
-		const [[ aLat, aLon, aRadius ], [ bLat, bLon, bRadius ]] = points;
-		const aCenter = [ aLat, aLon ];
-		const bCenter = [ bLat, bLon ];
-		if (circlesIntersect(aCenter, aRadius, bCenter, bRadius)) {
-			return get2CirclesIntersections(aCenter, aRadius, bCenter, bRadius);
+		const [ a, b ] = points;
+		if (circlesIntersect(a, a[2], b, b[2])) {
+			return get2CirclesIntersections(a, a[2], b, b[2]);
 		}
 	}
 	const calcError = calcErrorFunction(points);
-	return sphereSearch({ calcError }).slice(0, 1);
+	const focus = [];
+	for (let j=1; j<points.length; ++j) {
+		const b = points[j];
+		for (let i=0; i<j; ++i) {
+			const a = points[i];
+			focus.push(...getFocusPoints(a, b));
+		}
+	}
+	let searchers = focus.map(coord => {
+		let distance;
+		for (let other of focus) {
+			if (other === coord) continue;
+			const dist = calcDist(coord, other);
+			if (distance === undefined || dist < distance) distance = dist;
+		}
+		if (distance !== undefined) distance /= 3;
+		return new SphereSearcher({ calcError, coord, distance });
+	});
+	if (searchers.length === 0) searchers = undefined;
+	return sphereSearch({
+		calcError,
+		searchers,
+		nResults: focus.length === 2 ? 2 : 1,
+	});
 };
