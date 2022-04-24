@@ -3,10 +3,18 @@ import { normalVec3ToCoord, coordAzDistToPoint, calcDist } from './sphere-math.j
 
 const N_NEIGHBORS = 5;
 const STEP = Math.PI*2/N_NEIGHBORS;
+const arrayRemove = (array, item) => {
+	const index = array.indexOf(item);
+	if (index !== -1) array.splice(index, 1);
+};
+
+const defDist = calcDist(
+	normalVec3ToCoord(Vec3(1, 1, 1).normal()),
+	normalVec3ToCoord(Vec3(1, 1, -1).normal()),
+)/4;
 
 export class SphereSearcher {
-	constructor({ coord, distance, calcError }) {
-		this.id = Symbol();
+	constructor({ calcError, coord, distance = defDist }) {
 		this.coord = coord;
 		this.error = calcError(coord);
 		this.distance = distance;
@@ -37,10 +45,6 @@ export class SphereSearcher {
 	}
 }
 
-const distance = calcDist(
-	normalVec3ToCoord(Vec3(1, 1, 1).normal()),
-	normalVec3ToCoord(Vec3(1, 1, -1).normal()),
-)/4;
 const vec = Vec3();
 const defaultSearchers = (calcError) => {
 	const array = [];
@@ -53,10 +57,30 @@ const defaultSearchers = (calcError) => {
 		const z = zBit*2 - 1;
 		vec.set(x, y, z).normal();
 		const coord = normalVec3ToCoord(vec);
-		const searcher = new SphereSearcher({ coord, distance, calcError });
+		const searcher = new SphereSearcher({ coord, distance: defDist, calcError });
 		array.push(searcher);
 	}
 	return array;
+};
+
+const combineSearchers = (searchers, precision) => {
+	let pairs = [];
+	for (let j=1; j<searchers.length; ++j) {
+		const b = searchers[j];
+		for (let i=0; i<j; ++i) {
+			const a = searchers[i];
+			const dist = calcDist(a.coord, b.coord);
+			pairs.push({ a, b, dist });
+		}
+	}
+	pairs.sort((a, b) => a.dist - b.dist);
+	while (pairs.length) {
+		const [{ a, b, dist }] = pairs;
+		if (dist >= precision) break;
+		const removed = a.error > b.error ? a : b;
+		arrayRemove(searchers, removed);
+		pairs = pairs.filter(pair => pair.a !== removed && pair.b !== removed);
+	}
 };
 
 export const sphereSearch = ({
@@ -78,6 +102,7 @@ export const sphereSearch = ({
 		}
 		if (complete) break;
 	}
+	combineSearchers(searchers, precision);
 	searchers.sort((a, b) => a.error - b.error);
-	return searchers.map(searcher => searcher.coord);
+	return searchers.slice(0, nResults).map(searcher => searcher.coord);
 };
