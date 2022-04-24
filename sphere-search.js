@@ -38,6 +38,7 @@ export class SphereSearcher {
 		if (changed) {
 			this.coord = coord;
 			this.error = error;
+			this.distance = distance*1.2;
 		} else {
 			this.distance = distance*0.5;
 		}
@@ -86,7 +87,7 @@ const combineSearchers = (searchers, precision) => {
 export const sphereSearch = ({
 	calcError,
 	precision = 1e-6,
-	maxIterations = 50,
+	maxIterations = 100,
 	searchers = defaultSearchers(calcError),
 	nResults = 1,
 }) => {
