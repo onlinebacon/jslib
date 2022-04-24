@@ -5,6 +5,7 @@ import {
 	coordToNormalVec3,
 	calcDist,
 } from './sphere-math.js';
+import { sphereSearch } from './sphere-search.js';
 
 const { cos, sin, PI, acos, sqrt } = Math;
 const TAU = PI*2;
@@ -56,4 +57,27 @@ export const circlesIntersect = (
 	if (r1 + r2 <= d) return false;
 	if (d + r1 <= r2) return false;
 	return true;
+};
+
+const calcErrorFunction = (points) => (coord) => {
+	let sum = 0;
+	for (let point of points) {
+		const dist = point[2];
+		const dif = dist - calcDist(coord, point);
+		sum += dif*dif;
+	}
+	return sum;
+};
+
+export const trilaterate = (points) => {
+	if (points.length === 2) {
+		const [[ aLat, aLon, aRadius ], [ bLat, bLon, bRadius ]] = points;
+		const aCenter = [ aLat, aLon ];
+		const bCenter = [ bLat, bLon ];
+		if (circlesIntersect(aCenter, aRadius, bCenter, bRadius)) {
+			return get2CirclesIntersections(aCenter, aRadius, bCenter, bRadius);
+		}
+	}
+	const calcError = calcErrorFunction(points);
+	return sphereSearch({ calcError }).slice(0, 1);
 };
