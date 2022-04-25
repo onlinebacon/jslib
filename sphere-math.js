@@ -1,6 +1,10 @@
 import { Mat3, Vec3 } from './l-algebra-3.js';
 
 const { PI, sin, cos, asin, acos, sqrt } = Math;
+const sin2 = angle => {
+	const ans = sin(angle);
+	return ans*ans;
+};
 const TAU = PI*2;
 
 const d90 = PI*0.5;
@@ -12,6 +16,12 @@ const auxVecA = Vec3();
 const auxVecB = Vec3();
 
 const auxMat = Mat3();
+
+export const haversine = (aLat, aLon, bLat, bLon) => {
+	const dLat = bLat - aLat;
+	const dLon = bLon - aLon;
+	return 2*asin(sqrt(sin2(dLat*0.5) + cos(aLat)*cos(bLat)*sin2(dLon*0.5)));
+};
 
 export const chordToArclen = (chord) => {
 	return asin(chord*0.5)*2;
@@ -32,12 +42,7 @@ export const normalVec3ToCoord = ([ x, y, z ]) => {
 	return [ lat, x >= 0 ? acos(z/len) : - acos(z/len) ];
 };
 
-export const calcDist = (a, b) => {
-	coordToNormalVec3(a, auxVecA);
-	coordToNormalVec3(b, auxVecB);
-	const chord = auxVecA.sub(auxVecB).len();
-	return chordToArclen(chord);
-};
+export const calcDist = ([ aLat, aLon ], [ bLat, bLon ]) => haversine(aLat, aLon, bLat, bLon);
 
 export const coordAzDistToVec3 = ([ lat, lon ], azimuth, distance, dst = Vec3()) => {
 	dst.set(0, 0, 1);
