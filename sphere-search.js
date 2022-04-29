@@ -24,7 +24,6 @@ export class SphereSearcher {
 		const { calcError, distance } = this;
 		let { coord, error } = this;
 		let changed = false;
-		const [ lat, lon ] = coord;
 		for (let i=0; i<N_NEIGHBORS; ++i) {
 			const azimuth = STEP*i;
 			const point = coordAzDistToPoint(coord, azimuth, distance);

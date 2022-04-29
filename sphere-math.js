@@ -1,21 +1,12 @@
-import { Mat3, Vec3 } from './l-algebra-3.js';
+import { Vec3 } from './l-algebra-3.js';
 
 const { PI, sin, cos, asin, acos, sqrt } = Math;
 const sin2 = angle => {
 	const ans = sin(angle);
 	return ans*ans;
 };
-const TAU = PI*2;
-
-const d90 = PI*0.5;
-const d180 = PI*1;
 const d360 = PI*2;
-
-const auxVec = Vec3();
-const auxVecA = Vec3();
-const auxVecB = Vec3();
-
-const auxMat = Mat3();
+const vec = Vec3();
 
 export const haversine = (aLat, aLon, bLat, bLon) => {
 	const dLat = bLat - aLat;
@@ -52,16 +43,16 @@ export const coordAzDistToVec3 = ([ lat, lon ], azimuth, distance, dst = Vec3())
 };
 
 export const coordAzDistToPoint = (coord, azimuth, distance) => {
-	coordAzDistToVec3(coord, azimuth, distance, auxVec);
-	return normalVec3ToCoord(auxVec);
+	coordAzDistToVec3(coord, azimuth, distance, vec);
+	return normalVec3ToCoord(vec);
 };
 
 export const azFromCoordToVec3 = ([ lat, lon ], vec) => {
-	const [ x, y, z ] = auxVec.set(vec).rotateYX(-lon, lat);
+	const [ x, y, z ] = vec.set(vec).rotateYX(-lon, lat);
 	const len = sqrt(x*x + y*y);
 	return x >= 0 ? acos(y/len) : d360 - acos(y/len);
 };
 
 export const calcAzimuth = (a, b) => {
-	return azFromCoordToVec3(a, coordToNormalVec3(b, auxVec));
+	return azFromCoordToVec3(a, coordToNormalVec3(b, vec));
 };
