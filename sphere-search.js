@@ -63,7 +63,7 @@ const defaultSearchers = (calcError) => {
 	return array;
 };
 
-const combineSearchers = (searchers, precision) => {
+const combineSearchers = (searchers, groupDistance) => {
 	let pairs = [];
 	for (let j=1; j<searchers.length; ++j) {
 		const b = searchers[j];
@@ -76,7 +76,7 @@ const combineSearchers = (searchers, precision) => {
 	pairs.sort((a, b) => a.dist - b.dist);
 	while (pairs.length) {
 		const [{ a, b, dist }] = pairs;
-		if (dist >= precision) break;
+		if (dist >= groupDistance) break;
 		const removed = a.error > b.error ? a : b;
 		arrayRemove(searchers, removed);
 		pairs = pairs.filter(pair => pair.a !== removed && pair.b !== removed);
@@ -86,6 +86,7 @@ const combineSearchers = (searchers, precision) => {
 export const sphereSearch = ({
 	calcError,
 	precision = 1e-6,
+	groupDistance = precision*10,
 	maxIterations = 100,
 	searchers = defaultSearchers(calcError),
 	nResults = 1,
@@ -102,7 +103,7 @@ export const sphereSearch = ({
 		}
 		if (complete) break;
 	}
-	combineSearchers(searchers, precision);
+	combineSearchers(searchers, groupDistance);
 	searchers.sort((a, b) => a.error - b.error);
 	return searchers.slice(0, nResults).map(searcher => searcher.coord);
 };
