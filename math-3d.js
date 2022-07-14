@@ -89,3 +89,20 @@ const buildXRotationMat3 = (angle, dst) => {
 	dst[7] = sin;
 	dst[8] = cos;
 };
+
+const buildYRotationMat3 = (angle, dst) => {
+	const sin = Math.sin(angle);
+	const cos = Math.cos(angle);
+	
+	dst[0] = cos;
+	dst[1] = 0;
+	dst[2] = sin;
+
+	dst[3] = 0;
+	dst[4] = 1;
+	dst[5] = 0;
+
+	dst[6] = - sin;
+	dst[7] = 0;
+	dst[8] = cos;
+};
