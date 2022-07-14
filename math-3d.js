@@ -1,3 +1,10 @@
+// This library implements operations for vectors and matrices of 3 dimensions.
+// Definitions:
+// - Matrices are implemented as single-dimensioned arrays;
+// - Matrices are row major;
+// - The coordinate system is right-handed;
+// - Rotations around the coordinate axes are clockwise when seen from the positive to the negative of the axis;
+
 const mulMat3Mat3 = (a, b, dst) => {
 	const [
 		aix, aiy, aiz,
