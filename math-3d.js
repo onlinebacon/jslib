@@ -106,3 +106,11 @@ const buildYRotationMat3 = (angle, dst) => {
 	dst[7] = 0;
 	dst[8] = cos;
 };
+
+const rotateYXMat3 = (mat, angleY, angleX, dst) => {
+	const rotY = [], rotX = [], rotYX = [];
+	buildYRotationMat3(angleY, rotY);
+	buildXRotationMat3(angleX, rotX);
+	mulMat3Mat3(rotY, rotX, rotYX);
+	mulMat3Mat3(mat, rotYX, dst);
+};
