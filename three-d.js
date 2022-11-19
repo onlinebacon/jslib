@@ -11,7 +11,8 @@ export class Vector extends NumType {
 			const offset = VEC_LEN*index;
 			super(buffer, offset, 3);
 		} else if (a instanceof Array) {
-			super(a);
+			super(3);
+			this.set(a);
 		} else {
 			super(3);
 		}
