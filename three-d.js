@@ -60,7 +60,7 @@ export class Vector extends NumType {
 	dot([ x, y, z ]) {
 		return this[0]*x + this[1]*y + this[2]*z;
 	}
-	transform(transform, dst = this) {
+	apply(transform, dst = this) {
 		const [ x, y, z ] = this;
 		const [ ix, iy, iz, jx, jy, jz, kx, ky, kz, lx, ly, lz ] = transform;
 		dst[0] = x*ix + y*jx + z*kx + lx;
@@ -163,11 +163,11 @@ export class Transform extends NumType {
 		this.l._rotateZ(sin, cos, dst.l);
 		return dst;
 	}
-	transform(transform, dst = this) {
-		this.i.transform(transform, dst.i);
-		this.j.transform(transform, dst.j);
-		this.k.transform(transform, dst.k);
-		this.l.transform(transform, dst.l);
+	apply(transform, dst = this) {
+		this.i.apply(transform, dst.i);
+		this.j.apply(transform, dst.j);
+		this.k.apply(transform, dst.k);
+		this.l.apply(transform, dst.l);
 		return dst;
 	}
 	toMatrix() {
