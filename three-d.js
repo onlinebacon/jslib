@@ -10,6 +10,8 @@ export class Vector extends NumType {
 			const [ { buffer }, index ] = [ a, b ];
 			const offset = VEC_LEN*index;
 			super(buffer, offset, 3);
+		} else if (a instanceof Array) {
+			super(a);
 		} else {
 			super(3);
 		}
