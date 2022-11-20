@@ -170,10 +170,36 @@ export class Transform extends NumType {
 		return dst;
 	}
 	apply(transform, dst = this) {
-		this.i.apply(transform, dst.i);
-		this.j.apply(transform, dst.j);
-		this.k.apply(transform, dst.k);
-		this.l.apply(transform, dst.l);
+		const [
+			aix, aiy, aiz,
+			ajx, ajy, ajz,
+			akx, aky, akz,
+			alx, aly, alz,
+		] = this;
+
+		const [
+			bix, biy, biz,
+			bjx, bjy, bjz,
+			bkx, bky, bkz,
+			blx, bly, blz,
+		] = transform;
+
+		dst[0x0] = aix*bix + aiy*bjx + aiz*bkx;
+		dst[0x1] = aix*biy + aiy*bjy + aiz*bky;
+		dst[0x2] = aix*biz + aiy*bjz + aiz*bkz;
+
+		dst[0x3] = ajx*bix + ajy*bjx + ajz*bkx;
+		dst[0x4] = ajx*biy + ajy*bjy + ajz*bky;
+		dst[0x5] = ajx*biz + ajy*bjz + ajz*bkz;
+
+		dst[0x6] = akx*bix + aky*bjx + akz*bkx;
+		dst[0x7] = akx*biy + aky*bjy + akz*bky;
+		dst[0x8] = akx*biz + aky*bjz + akz*bkz;
+
+		dst[0x9] = alx*bix + aly*bjx + alz*bkx + blx;
+		dst[0xA] = alx*biy + aly*bjy + alz*bky + bly;
+		dst[0xB] = alx*biz + aly*bjz + alz*bkz + blz;
+
 		return dst;
 	}
 	toMatrix() {
