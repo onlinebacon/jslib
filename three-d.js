@@ -123,10 +123,16 @@ export class Transform extends NumType {
 		this.l = new Vector(this, 3);
 	}
 	set(transform) {
-		this.i.set(transform.i);
-		this.j.set(transform.j);
-		this.k.set(transform.k);
-		this.l.set(transform.l);
+		if (transform instanceof Transform) {
+			this.i.set(transform.i);
+			this.j.set(transform.j);
+			this.k.set(transform.k);
+			this.l.set(transform.l);
+		} else {
+			for (let i=0; i<12; ++i) {
+				this[i] = transform[i];
+			}
+		}
 		return this;
 	}
 	translate(vec, dst = this) {
