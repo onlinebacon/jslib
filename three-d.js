@@ -45,7 +45,7 @@ export class Vector extends NumType {
 	}
 	len() {
 		const [ x, y, z ] = this;
-		return Math.sqrt(x*x, y*y, z*z);
+		return Math.sqrt(x*x + y*y + z*z);
 	}
 	scale(scalar, dst = this) {
 		const [ x, y, z ] = this;
