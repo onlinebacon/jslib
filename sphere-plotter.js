@@ -33,9 +33,9 @@ const observerUpdateHandlers = [];
 
 let canvas, ctx;
 let cx, cy;
+let viewRadius;
 let nDivisions = 6;
 let nVertices = 90;
-let viewRadius = 190;
 
 const chordToArc = (chord) => Math.asin(chord/2)*2;
 
@@ -281,6 +281,7 @@ const updateProjection = () => {
 const handleCanvasResize = () => {
 	cx = canvas.width*0.5;
 	cy = canvas.height*0.5;
+	viewRadius = Math.min(canvas.width, canvas.height)*0.4;
 };
 
 const clear = () => {
@@ -571,6 +572,36 @@ export const getNDivisions = () => nDivisions;
 export const setNDivisions = (n) => {
 	nDivisions = n;
 	buildGrid();
+};
+
+export const setColor = ({
+	background,
+	latitudeLines,
+	longitudeLines,
+	greenwich,
+	equator,
+	border,
+	surface,
+	smallCircle,
+	line,
+	point,
+	northPole,
+	southPole,
+	crossHair,
+}) => {
+	if (background != null) colorMap.background = background;
+	if (latitudeLines != null) colorMap.latitudeLines = latitudeLines;
+	if (longitudeLines != null) colorMap.longitudeLines = longitudeLines;
+	if (greenwich != null) colorMap.greenwich = greenwich;
+	if (equator != null) colorMap.equator = equator;
+	if (border != null) colorMap.border = border;
+	if (surface != null) colorMap.surface = surface;
+	if (smallCircle != null) colorMap.smallCircle = smallCircle;
+	if (crossHair != null) colorMap.crossHair = crossHair;
+	if (line != null) colorMap.line = line;
+	if (point != null) colorMap.point = point;
+	if (northPole != null) colorMap.northPole = northPole;
+	if (southPole != null) colorMap.southPole = southPole;
 };
 
 buildGrid();
