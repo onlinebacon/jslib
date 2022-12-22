@@ -9,18 +9,24 @@ const colorMap = {
 	background: '#2c2c2c',
 	latitudeLines: 'rgba(0, 255, 192, 0.5)',
 	longitudeLines: 'rgba(0, 192, 255, 0.5)',
+	greenwich: 'rgba(255, 255, 255, 0.5)',
+	equator: 'rgba(255, 64, 0, 0.5)',
 	border: 'rgba(0, 255, 255, 1)',
 	surface: 'rgba(40, 40, 40, 0.8)',
 	smallCircle: '#fb0',
 	crossHair: '#fff',
 	line: '#fff',
 	point: '#fff',
+	northPole: '#f44',
+	southPole: '#ccc',
 };
 
-const points = [];
+const gridPoints = [];
+const userPoints = [];
 const gridSmallCircles = [];
 const userSmallCircles = [];
-const lines = [];
+const userLines = [];
+const gridLines = [];
 const global = new Transform();
 const projection = new Transform();
 const observerUpdateHandlers = [];
@@ -291,10 +297,28 @@ const forEachCircle = (fn) => {
 	}
 };
 
+const forEachLine = (fn) => {
+	for (let i=0; i<gridLines.length; ++i) {
+		fn(gridLines[i]);
+	}
+	for (let i=0; i<userLines.length; ++i) {
+		fn(userLines[i]);
+	}
+};
+
+const forEachPoint = (fn) => {
+	for (let i=0; i<gridPoints.length; ++i) {
+		fn(gridPoints[i]);
+	}
+	for (let i=0; i<userPoints.length; ++i) {
+		fn(userPoints[i]);
+	}
+};
+
 const updateViews = () => {
 	forEachCircle((circle) => circle.updateView());
-	points.forEach(point => point.updateView());
-	lines.forEach(line => line.updateView());
+	forEachLine(line => line.updateView());
+	forEachPoint(point => point.updateView());
 };
 
 const drawNevagives = () => {
@@ -302,13 +326,13 @@ const drawNevagives = () => {
 		ctx.strokeStyle = circle.color;
 		circle.drawNegative();
 	});
-	points.forEach(point => {
-		ctx.strokeStyle = point.color;
-		point.drawNegative();
-	});
-	lines.forEach(line => {
+	forEachLine(line => {
 		ctx.strokeStyle = line.color;
 		line.drawNegative();
+	});
+	forEachPoint(point => {
+		ctx.strokeStyle = point.color;
+		point.drawNegative();
 	});
 };
 
@@ -317,13 +341,13 @@ const drawPositives = () => {
 		ctx.strokeStyle = circle.color;
 		circle.drawPositive();
 	});
-	points.forEach(point => {
-		ctx.strokeStyle = point.color;
-		point.drawPositive();
-	});
-	lines.forEach(line => {
+	forEachLine(line => {
 		ctx.strokeStyle = line.color;
 		line.drawPositive();
+	});
+	forEachPoint(point => {
+		ctx.strokeStyle = point.color;
+		point.drawPositive();
 	});
 };
 
@@ -361,16 +385,26 @@ const render = () => {
 	drawCrossHair();
 };
 
-const biuldGrid = () => {
+const buildGrid = () => {
 	gridSmallCircles.length = 0;
-	for (let i=0; i<nDivisions; ++i) {
-		const angle = Math.PI/nDivisions*i;
+	gridLines.length = 0;
+	gridPoints.length = 0;
+	for (let i=1; i<nDivisions; ++i) {
+		const angle = Math.PI/2 + Math.PI/nDivisions*i;
 		gridSmallCircles.push(new SmallCircle(0, angle, Math.PI*0.5, colorMap.longitudeLines));
 	}
+	gridLines.push(new Line(0, 0, Math.PI/2, 0, colorMap.greenwich));
+	gridLines.push(new Line(0, 0, -Math.PI/2, 0, colorMap.greenwich));
+	gridLines.push(new Line(0, Math.PI, Math.PI/2, 0, colorMap.longitudeLines));
+	gridLines.push(new Line(0, Math.PI, -Math.PI/2, 0, colorMap.longitudeLines));
 	for (let i=1; i<nDivisions; ++i) {
-		const angle = Math.PI/nDivisions*i;
-		gridSmallCircles.push(new SmallCircle(Math.PI*0.5, 0, angle, colorMap.latitudeLines));
+		const t = i/nDivisions;
+		const color = t === 0.5 ? colorMap.equator : colorMap.latitudeLines;
+		const angle = Math.PI*t;
+		gridSmallCircles.push(new SmallCircle(Math.PI*0.5, 0, angle, color));
 	}
+	gridPoints.push(new Point(Math.PI/2, 0, colorMap.northPole));
+	gridPoints.push(new Point(-Math.PI/2, 0, colorMap.southPole));
 };
 
 let touchStartData = null;
@@ -482,13 +516,13 @@ export const addSmallCircle = (lat, lon, rad, color = colorMap.smallCircle) => {
 
 export const addPoint = (lat, lon, color = colorMap.point) => {
 	const point = new Point(lat, lon, color);
-	points.push(point);
+	userPoints.push(point);
 	return point;
 };
 
 export const addLine = (lat1, lon1, lat2, lon2, color = colorMap.line) => {
 	const line = new Line(lat1, lon1, lat2, lon2, color);
-	lines.push(line);
+	userLines.push(line);
 	return line;
 };
 
@@ -518,13 +552,13 @@ export const removeSmallCircle = (circle) => {
 };
 
 export const removePoint = (point) => {
-	const index = points.indexOf(point);
-	points.splice(index, 1);
+	const index = userPoints.indexOf(point);
+	userPoints.splice(index, 1);
 };
 
 export const removeLine = (line) => {
-	const index = lines.indexOf(line);
-	lines.splice(index, 1);
+	const index = userLines.indexOf(line);
+	userLines.splice(index, 1);
 };
 
 export const getNVertices = () => nVertices;
@@ -536,7 +570,7 @@ export const setNVertices = (n) => {
 export const getNDivisions = () => nDivisions;
 export const setNDivisions = (n) => {
 	nDivisions = n;
-	biuldGrid();
+	buildGrid();
 };
 
-biuldGrid();
+buildGrid();
