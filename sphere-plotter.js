@@ -612,6 +612,7 @@ export const reset = () => {
 	userPoints.length = 0;
 	userLines.length = 0;
 	userSmallCircles.length = 0;
+	setObserver(0, 0, 0);
 };
 
 buildGrid();
