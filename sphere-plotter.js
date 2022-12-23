@@ -447,14 +447,14 @@ const handleTouchEnd = (x, y) => {
 };
 
 const bindCanvas = () => {
-	canvas.addEventListener('mousedown', e => {
+	canvas.addEventListener?.('mousedown', e => {
 		if (e.ctrlKey || e.shiftKey || e.altKey) return;
 		if (e.button !== LEFT_BUTTON) return;
 		const x = e.offsetX;
 		const y = e.offsetY;
 		handleTouchStart(x, y);
 	});
-	canvas.addEventListener('mousemove', e => {
+	canvas.addEventListener?.('mousemove', e => {
 		if (touchStartData === null) return;
 		const x = e.offsetX;
 		const y = e.offsetY;
@@ -464,14 +464,14 @@ const bindCanvas = () => {
 		}
 		handleDrag(x, y);
 	});
-	canvas.addEventListener('mouseup', e => {
+	canvas.addEventListener?.('mouseup', e => {
 		if (e.button !== LEFT_BUTTON) return;
 		if (touchStartData === null) return;
 		const x = e.offsetX;
 		const y = e.offsetY;
 		handleTouchEnd(x, y);
 	});
-	canvas.addEventListener('touchstart', e => {
+	canvas.addEventListener?.('touchstart', e => {
 		const bcr = e.target.getBoundingClientRect();
 		const x = e.targetTouches[0].clientX - bcr.x;
 		const y = e.targetTouches[0].clientY - bcr.y;
@@ -479,7 +479,7 @@ const bindCanvas = () => {
 		e.stopPropagation();
 		handleTouchStart(x, y);
 	});
-	canvas.addEventListener('touchmove', e => {
+	canvas.addEventListener?.('touchmove', e => {
 		const bcr = e.target.getBoundingClientRect();
 		const x = e.targetTouches[0].clientX - bcr.x;
 		const y = e.targetTouches[0].clientY - bcr.y;
@@ -487,7 +487,7 @@ const bindCanvas = () => {
 		e.stopPropagation();
 		handleDrag(x, y);
 	});
-	canvas.addEventListener('wheel', e => {
+	canvas.addEventListener?.('wheel', e => {
 		const { deltaY } = e;
 		if (!deltaY) return;
 		viewRadius = Math.exp(Math.log(viewRadius) - deltaY/Math.abs(deltaY)*0.2);
