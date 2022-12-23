@@ -33,9 +33,9 @@ const observerUpdateHandlers = [];
 
 let canvas, ctx;
 let cx, cy;
-let viewRadius;
 let nDivisions = 6;
 let nVertices = 90;
+let viewRadius = 190;
 
 const chordToArc = (chord) => Math.asin(chord/2)*2;
 
@@ -281,7 +281,6 @@ const updateProjection = () => {
 const handleCanvasResize = () => {
 	cx = canvas.width*0.5;
 	cy = canvas.height*0.5;
-	viewRadius = Math.min(canvas.width, canvas.height)*0.4;
 };
 
 const clear = () => {
@@ -602,6 +601,10 @@ export const setColor = ({
 	if (point != null) colorMap.point = point;
 	if (northPole != null) colorMap.northPole = northPole;
 	if (southPole != null) colorMap.southPole = southPole;
+};
+
+export const setViewRadius = (radius) => {
+	viewRadius = radius;
 };
 
 buildGrid();
