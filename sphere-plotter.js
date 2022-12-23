@@ -284,6 +284,7 @@ const handleCanvasResize = () => {
 };
 
 const clear = () => {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = colorMap.background;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 };
